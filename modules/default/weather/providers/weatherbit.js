@@ -1,6 +1,6 @@
 /* global WeatherProvider, WeatherObject */
 
-/* MagicMirror²
+/* Magic Mirror
  * Module: Weather
  * Provider: Weatherbit
  *

@@ -1,6 +1,6 @@
 /* global WeatherProvider, WeatherObject */
 
-/* MagicMirror²
+/* Magic Mirror
  * Module: Weather
  * Provider: Environment Canada (EC)
  *
@@ -40,7 +40,6 @@ WeatherProvider.register("envcanada", {
 
 	// Set the default config properties that is specific to this provider
 	defaults: {
-		useCorsProxy: true,
 		siteCode: "s1234567",
 		provCode: "ON"
 	},
@@ -74,7 +73,7 @@ WeatherProvider.register("envcanada", {
 	// Override the fetchCurrentWeather method to query EC and construct a Current weather object
 	//
 	fetchCurrentWeather() {
-		this.fetchData(this.getUrl(), "GET", "xml")
+		this.fetchData(this.getUrl(), "GET")
 			.then((data) => {
 				if (!data) {
 					// Did not receive usable new data.
@@ -94,7 +93,7 @@ WeatherProvider.register("envcanada", {
 	// Override the fetchWeatherForecast method to query EC and construct Forecast weather objects
 	//
 	fetchWeatherForecast() {
-		this.fetchData(this.getUrl(), "GET", "xml")
+		this.fetchData(this.getUrl(), "GET")
 			.then((data) => {
 				if (!data) {
 					// Did not receive usable new data.
@@ -114,7 +113,7 @@ WeatherProvider.register("envcanada", {
 	// Override the fetchWeatherHourly method to query EC and construct Forecast weather objects
 	//
 	fetchWeatherHourly() {
-		this.fetchData(this.getUrl(), "GET", "xml")
+		this.fetchData(this.getUrl(), "GET")
 			.then((data) => {
 				if (!data) {
 					// Did not receive usable new data.
@@ -130,6 +129,26 @@ WeatherProvider.register("envcanada", {
 			.finally(() => this.updateAvailable());
 	},
 
+	//
+	// Override fetchData function to handle XML document (base function assumes JSON)
+	//
+	fetchData: function (url, method = "GET", data = null) {
+		return new Promise(function (resolve, reject) {
+			const request = new XMLHttpRequest();
+			request.open(method, url, true);
+			request.onreadystatechange = function () {
+				if (this.readyState === 4) {
+					if (this.status === 200) {
+						resolve(this.responseXML);
+					} else {
+						reject(request);
+					}
+				}
+			};
+			request.send();
+		});
+	},
+
 	//////////////////////////////////////////////////////////////////////////////////
 	//
 	// Environment Canada methods - not part of the standard Provider methods
@@ -141,8 +160,11 @@ WeatherProvider.register("envcanada", {
 	// URL defaults to the Englsih version simply because there is no language dependancy in the data
 	// being accessed. This is only pertinent when using the EC data elements that contain a textual forecast.
 	//
+	// Also note that access is supported through a proxy service (thingproxy.freeboard.io) to mitigate
+	// CORS errors when accessing EC
+	//
 	getUrl() {
-		return "https://dd.weather.gc.ca/citypage_weather/xml/" + this.config.provCode + "/" + this.config.siteCode + "_e.xml";
+		return "https://thingproxy.freeboard.io/fetch/https://dd.weather.gc.ca/citypage_weather/xml/" + this.config.provCode + "/" + this.config.siteCode + "_e.xml";
 	},
 
 	//

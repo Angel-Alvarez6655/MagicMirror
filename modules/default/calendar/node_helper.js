@@ -1,4 +1,4 @@
-/* MagicMirror²
+/* Magic Mirror
  * Node Helper: Calendar
  *
  * By Michael Teeuw https://michaelteeuw.nl

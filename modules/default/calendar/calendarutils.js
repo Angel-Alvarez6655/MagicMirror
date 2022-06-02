@@ -1,4 +1,4 @@
-/* MagicMirror²
+/* Magic Mirror
  * Calendar Util Methods
  *
  * By Michael Teeuw https://michaelteeuw.nl
@@ -470,7 +470,7 @@ const CalendarUtils = {
 					}
 
 					// Adjust start date so multiple day events will be displayed as happening today even though they started some days ago already
-					if (fullDayEvent && startDate <= today && endDate > today) {
+					if (fullDayEvent && startDate <= today) {
 						startDate = moment(today);
 					}
 					// if the start and end are the same, then make end the 'end of day' value (start is at 00:00:00)
@@ -498,7 +498,23 @@ const CalendarUtils = {
 			return a.startDate - b.startDate;
 		});
 
-		return newEvents;
+		// include up to maximumEntries current or upcoming events
+		// If past events should be included, include all past events
+		const now = moment();
+		let entries = 0;
+		let events = [];
+		for (let ne of newEvents) {
+			if (moment(ne.endDate, "x").isBefore(now)) {
+				if (config.includePastEvents) events.push(ne);
+				continue;
+			}
+			entries++;
+			// If max events has been saved, skip the rest
+			if (entries > config.maximumEntries) break;
+			events.push(ne);
+		}
+
+		return events;
 	},
 
 	/**

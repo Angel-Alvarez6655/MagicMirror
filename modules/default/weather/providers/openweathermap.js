@@ -1,6 +1,6 @@
 /* global WeatherProvider, WeatherObject */
 
-/* MagicMirror²
+/* Magic Mirror
  * Module: Weather
  *
  * By Michael Teeuw https://michaelteeuw.nl
@@ -128,7 +128,12 @@ WeatherProvider.register("openweathermap", {
 		currentWeather.humidity = currentWeatherData.main.humidity;
 		currentWeather.temperature = currentWeatherData.main.temp;
 		currentWeather.feelsLikeTemp = currentWeatherData.main.feels_like;
-		currentWeather.windSpeed = currentWeatherData.wind.speed;
+
+		if (this.config.windUnits === "metric") {
+			currentWeather.windSpeed = this.config.useKmh ? currentWeatherData.wind.speed * 3.6 : currentWeatherData.wind.speed;
+		} else {
+			currentWeather.windSpeed = currentWeatherData.wind.speed;
+		}
 		currentWeather.windDirection = currentWeatherData.wind.deg;
 		currentWeather.weatherType = this.convertWeatherType(currentWeatherData.weather[0].icon);
 		currentWeather.sunrise = moment(currentWeatherData.sys.sunrise, "X");

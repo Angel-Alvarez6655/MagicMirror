@@ -1,6 +1,6 @@
 /* global SunCalc */
 
-/* MagicMirror²
+/* Magic Mirror
  * Module: Weather
  *
  * By Michael Teeuw https://michaelteeuw.nl

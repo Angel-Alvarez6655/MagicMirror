@@ -1,6 +1,6 @@
 /* global WeatherProvider, WeatherObject */
 
-/* MagicMirror²
+/* Magic Mirror
  * Module: Weather
  * Provider: SMHI
  *
@@ -237,7 +237,7 @@ WeatherProvider.register("smhi", {
 	},
 
 	/**
-	 * Map the icon value from SMHI to an icon that MagicMirror² understands.
+	 * Map the icon value from SMHI to an icon that MagicMirror understands.
 	 * Uses different icons depending if its daytime or nighttime.
 	 * SMHI's description of what the numeric value means is the comment after the case.
 	 *

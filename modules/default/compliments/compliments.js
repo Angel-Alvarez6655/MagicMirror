@@ -1,6 +1,5 @@
-/* MagicMirror²
- * Module: Compliments
- *
+/* Magic Mirror
+ * Module: Complimen 
  * By Michael Teeuw https://michaelteeuw.nl
  * MIT Licensed.
  */
@@ -8,10 +7,20 @@ Module.register("compliments", {
 	// Module config defaults.
 	defaults: {
 		compliments: {
-			anytime: ["Hey there sexy!"],
-			morning: ["Good morning, handsome!", "Enjoy your day!", "How was your sleep?"],
-			afternoon: ["Hello, beauty!", "You look sexy!", "Looking good today!"],
-			evening: ["Wow, you look hot!", "You look nice!", "Hi, sexy!"],
+			anytime: [
+			"Tienes suerte de que no hay multas por exceso de belleza",
+			"Qué ojos tan bonitos tienes",
+			"Ojito con esa belleza ❤",
+			"¡Qué buen biscochito!",
+			"Te ves muy bien ;)",
+			"Aguas con ese gallito!",
+			"Espejito espejito...",
+			"You are the best!",
+			"Vonjour🤏"
+			],
+			morning: ["Buenos dias!", "Recuerda sonreir", "Soñaste bien?","❤","♡♡♡","☕"],
+			afternoon: ["Hello, beauty!", "You look sexy!", "Fiu fiuuu!"],
+			evening: ["Y ese wapeton?", "✨","You look nice!", "Hola, sexy personita!😘","☕"],
 			"....-01-01": ["Happy new year!"]
 		},
 		updateInterval: 30000,

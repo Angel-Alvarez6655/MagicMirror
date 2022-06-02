@@ -1,6 +1,6 @@
 /* global WeatherProvider, WeatherObject */
 
-/* MagicMirror²
+/* Magic Mirror
  * Module: Weather
  * Provider: Dark Sky
  *
@@ -18,8 +18,7 @@ WeatherProvider.register("darksky", {
 
 	// Set the default config properties that is specific to this provider
 	defaults: {
-		useCorsProxy: true,
-		apiBase: "https://api.darksky.net",
+		apiBase: "https://cors-anywhere.herokuapp.com/https://api.darksky.net",
 		weatherEndpoint: "/forecast",
 		apiKey: "",
 		lat: 0,

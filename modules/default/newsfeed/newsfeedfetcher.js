@@ -1,4 +1,4 @@
-/* MagicMirror²
+/* Magic Mirror
  * Node Helper: Newsfeed - NewsfeedFetcher
  *
  * By Michael Teeuw https://michaelteeuw.nl

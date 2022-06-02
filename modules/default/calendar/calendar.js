@@ -1,6 +1,6 @@
 /* global cloneObject */
 
-/* MagicMirror²
+/* Magic Mirror
  * Module: Calendar
  *
  * By Michael Teeuw https://michaelteeuw.nl
@@ -9,11 +9,11 @@
 Module.register("calendar", {
 	// Define module defaults
 	defaults: {
-		maximumEntries: 10, // Total Maximum Entries
+		maximumEntries: 6, // Total Maximum Entries
 		maximumNumberOfDays: 365,
 		limitDays: 0, // Limit the number of days shown, 0 = no limit
 		displaySymbol: true,
-		defaultSymbol: "calendar-alt", // Fontawesome Symbol see https://fontawesome.com/cheatsheet?from=io
+		defaultSymbol: "calendar", // Fontawesome Symbol see https://fontawesome.com/cheatsheet?from=io
 		showLocation: false,
 		displayRepeatingCountTitle: false,
 		defaultRepeatingCountTitle: "",
@@ -23,7 +23,7 @@ Module.register("calendar", {
 		wrapLocationEvents: false,
 		maxTitleLines: 3,
 		maxEventTitleLines: 3,
-		fetchInterval: 5 * 60 * 1000, // Update every 5 minutes.
+		fetchInterval: 1 * 5 * 1000, // Update every 5 minutes.
 		animationSpeed: 2000,
 		fade: true,
 		urgency: 7,
@@ -43,7 +43,7 @@ Module.register("calendar", {
 		tableClass: "small",
 		calendars: [
 			{
-				symbol: "calendar-alt",
+				symbol: "calendar",
 				url: "https://www.calendarlabs.com/templates/ical/US-Holidays.ics"
 			}
 		],
@@ -164,7 +164,7 @@ Module.register("calendar", {
 		const oneHour = oneMinute * 60;
 		const oneDay = oneHour * 24;
 
-		const events = this.createEventList(true);
+		const events = this.createEventList();
 		const wrapper = document.createElement("table");
 		wrapper.className = this.config.tableClass;
 
@@ -239,7 +239,7 @@ Module.register("calendar", {
 				const symbols = this.symbolsForEvent(event);
 				symbols.forEach((s, index) => {
 					const symbol = document.createElement("span");
-					symbol.className = "fas fa-fw fa-" + s;
+					symbol.className = "fa fa-fw fa-" + s;
 					if (index > 0) {
 						symbol.style.paddingLeft = "5px";
 					}
@@ -329,7 +329,8 @@ Module.register("calendar", {
 						//subtract one second so that fullDayEvents end at 23:59:59, and not at 0:00:00 one the next day
 						event.endDate -= oneSecond;
 						timeWrapper.innerHTML = this.capFirst(moment(event.startDate, "x").format(this.config.fullDayEventDateFormat));
-					} else if (this.config.getRelative > 0 && event.startDate < now) {
+					}
+					if (this.config.getRelative > 0 && event.startDate < now) {
 						// Ongoing and getRelative is set
 						timeWrapper.innerHTML = this.capFirst(
 							this.translate("RUNNING", {
@@ -476,10 +477,9 @@ Module.register("calendar", {
 	/**
 	 * Creates the sorted list of all events.
 	 *
-	 * @param {boolean} limitNumberOfEntries Whether to filter returned events for display.
 	 * @returns {object[]} Array with events.
 	 */
-	createEventList: function (limitNumberOfEntries) {
+	createEventList: function () {
 		const now = new Date();
 		const today = moment().startOf("day");
 		const future = moment().startOf("day").add(this.config.maximumNumberOfDays, "days").toDate();
@@ -490,7 +490,7 @@ Module.register("calendar", {
 			for (const e in calendar) {
 				const event = JSON.parse(JSON.stringify(calendar[e])); // clone object
 
-				if (event.endDate < now && limitNumberOfEntries) {
+				if (event.endDate < now) {
 					continue;
 				}
 				if (this.config.hidePrivate) {
@@ -499,7 +499,7 @@ Module.register("calendar", {
 						continue;
 					}
 				}
-				if (this.config.hideOngoing && limitNumberOfEntries) {
+				if (this.config.hideOngoing) {
 					if (event.startDate < now) {
 						continue;
 					}
@@ -547,10 +547,6 @@ Module.register("calendar", {
 		events.sort(function (a, b) {
 			return a.startDate - b.startDate;
 		});
-
-		if (!limitNumberOfEntries) {
-			return events;
-		}
 
 		// Limit the number of days displayed
 		// If limitDays is set > 0, limit display to that number of days
@@ -839,13 +835,21 @@ Module.register("calendar", {
 	 * The all events available in one array, sorted on startdate.
 	 */
 	broadcastEvents: function () {
-		const eventList = this.createEventList(false);
-		for (const event of eventList) {
-			event.symbol = this.symbolsForEvent(event);
-			event.calendarName = this.calendarNameForUrl(event.url);
-			event.color = this.colorForUrl(event.url);
-			delete event.url;
+		const eventList = [];
+		for (const url in this.calendarData) {
+			for (const ev of this.calendarData[url]) {
+				const event = cloneObject(ev);
+				event.symbol = this.symbolsForEvent(event);
+				event.calendarName = this.calendarNameForUrl(url);
+				event.color = this.colorForUrl(url);
+				delete event.url;
+				eventList.push(event);
+			}
 		}
+
+		eventList.sort(function (a, b) {
+			return a.startDate - b.startDate;
+		});
 
 		this.sendNotification("CALENDAR_EVENTS", eventList);
 	}
